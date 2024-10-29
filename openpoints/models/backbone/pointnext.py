@@ -162,8 +162,8 @@ class SetAbstraction(nn.Module):
                 fi = None
 
             group_idx = data['idx_group_sa'][self.layer_index - 1]
-            dp = grouping_operation(p.transpose(1, 2), group_idx)
-            fj = grouping_operation(f, group_idx)
+            dp = grouping_operation(p.transpose(1, 2).contiguous(), group_idx)
+            fj = grouping_operation(f.contiguous(), group_idx)
             fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
             f = self.pool(self.convs(fj))
             if self.use_res:
