@@ -409,7 +409,11 @@ def validate(model, val_loader, cfg, num_votes=1, data_transform=None, epoch=-1,
     for idx, data in pbar:
         keys = data.keys() if callable(data.keys) else data.keys
         for key in keys:
-            data[key] = data[key].cuda(non_blocking=True)
+            if isinstance(data[key], torch.Tensor):
+                data[key] = data[key].cuda(non_blocking=True)
+            elif isinstance(data[key], list):
+                for _i in range(len(data[key])):
+                    data[key][_i] = data[key][_i].cuda(non_blocking=True) if isinstance(data[key][_i], torch.Tensor) else data[key][_i]
         target = data['y'].squeeze(-1)
         data['x'] = get_features_by_keys(data, cfg.feature_keys)
         data['epoch'] = epoch
