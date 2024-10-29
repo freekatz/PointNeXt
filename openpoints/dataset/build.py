@@ -98,7 +98,7 @@ def build_dataloader_from_cfg(batch_size,
     return dataloader
 
 
-def collate_fn(self, datas):
+def collate_fn(datas):
     """collate fn for point transformer
     """
     pts, feats, labels, offset, count = [], [], [], [], 0
@@ -117,7 +117,7 @@ def collate_fn(self, datas):
     idx_group_la_all = []
     idx_group_sa_all = []
     idx_ds_all = []
-    layers = len(self.strides)
+    layers = len(data['idx_group_la'])
     for i in range(layers):
         idx_group_la_layer = []
         idx_group_sa_layer = []
