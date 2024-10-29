@@ -117,7 +117,7 @@ def collate_fn(datas):
     idx_group_la_all = []
     idx_group_sa_all = []
     idx_ds_all = []
-    layers = len(data['idx_group_la'])
+    layers = len(datas[0]['idx_group_la'])
     for i in range(layers):
         idx_group_la_layer = []
         idx_group_sa_layer = []
