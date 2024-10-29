@@ -183,14 +183,14 @@ class ScanNet(Dataset):
          
         if 'heights' not in data.keys():
             data['heights'] = data['pos'][:, self.gravity_dim:self.gravity_dim+1] - data['pos'][:, self.gravity_dim:self.gravity_dim+1].min()
-        data['x'] = torch.cat([data['pos'], data['x'], data['heights']], dim=-1).transpose(0, 1).contiguous()
+        data['x'] = torch.cat([data['pos'], data['x'], data['heights']], dim=-1).transpose(0, 1).contiguous().float()
         return self.make_idx(idx, data)
 
     def __len__(self):
         return len(self.data_list) * self.loop
 
     def make_idx(self, idx, data):
-        coord = data['pos']
+        coord = data['pos'].float()
         gs = NaiveGaussian3D(self.gs_opts, batch_size=8, device=coord.device)
         gs.projects(coord, cam_seed=idx, cam_batch=gs.opt.n_cameras * 2)
         visible = gs.gs_points.visible.squeeze(1).float()
