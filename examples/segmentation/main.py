@@ -359,7 +359,8 @@ def train_one_epoch(model, train_loader, criterion, optimizer, scheduler, scaler
         vis_points(data['pos'].cpu().numpy()[0], labels=data['y'].cpu().numpy()[0])
         vis_points(data['pos'].cpu().numpy()[0], data['x'][0, :3, :].transpose(1, 0))
         end of debug """
-        data['x'] = get_features_by_keys(data, cfg.feature_keys)
+        # data['x'] = get_features_by_keys(data, cfg.feature_keys)
+        data['x'] = data['x']
         data['epoch'] = epoch
         total_iter += 1 
         data['iter'] = total_iter 
