@@ -232,25 +232,38 @@ class ScanNet(Dataset):
         """collate fn for point transformer
         """
         pts, feats, labels, offset, count = [], [], [], [], 0
-        idx_group_la_all = []
-        idx_group_sa_all = []
-        idx_ds_all = []
         for data in datas:
             count += len(data['pos'])
             offset.append(count)
             pts.append(data['pos'])
             feats.append(data['x'])
             labels.append(data['y'])
-            idx_group_la_all.append(data['idx_group_la'])
-            idx_group_sa_all.append(data['idx_group_sa'])
-            idx_ds_all.append(data['idx_ds'])
         data = {
             'pos': torch.stack(pts, 0),
             'x': torch.stack(feats, 0),
             'y': torch.stack(labels, 0),
-            'idx_group_la': torch.stack(idx_group_la_all, 0),
-            'idx_group_sa': torch.stack(idx_group_sa_all, 0),
-            'idx_ds': torch.stack(idx_ds_all, 0),
         }
+
+        idx_group_la_all = []
+        idx_group_sa_all = []
+        idx_ds_all = []
+        layers = len( self.strides)
+        for i in range(layers):
+            idx_group_la_layer = []
+            idx_group_sa_layer = []
+            idx_ds_layer = []
+            for data in datas:
+                idx_group_la = data['idx_group_la']
+                idx_group_sa = data['idx_group_sa']
+                idx_ds = data['idx_ds']
+                idx_group_la_layer.append(idx_group_la[i])
+                idx_group_sa_layer.append(idx_group_sa[i])
+                idx_ds_layer.append(idx_ds[i])
+            idx_group_la_all.append(torch.stack(idx_group_la_layer, 0))
+            idx_group_sa_all.append(torch.stack(idx_group_sa_layer, 0))
+            idx_ds_all.append(torch.stack(idx_ds_layer, 0))
+        data['idx_group_la'] = idx_group_la_all
+        data['idx_group_sa'] = idx_group_sa_all
+        data['idx_ds'] = idx_ds_all
         return data
 
