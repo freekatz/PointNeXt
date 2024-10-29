@@ -267,10 +267,10 @@ class InvResMLP(nn.Module):
         self.pwconv = nn.Sequential(*pwconv)
         self.act = create_act(act_args)
 
-    def forward(self, pf):
+    def forward(self, pf, data):
         p, f = pf
         identity = f
-        f = self.convs([p, f])
+        f = self.convs([p, f], data)
         f = self.pwconv(f)
         if f.shape[-1] == identity.shape[-1] and self.use_res:
             f += identity
@@ -299,10 +299,10 @@ class ResBlock(nn.Module):
                                       **aggr_args, **kwargs)
         self.act = create_act(act_args)
 
-    def forward(self, pf):
+    def forward(self, pf, data):
         p, f = pf
         identity = f
-        f = self.convs([p, f])
+        f = self.convs([p, f], data)
         if f.shape[-1] == identity.shape[-1] and self.use_res:
             f += identity
         f = self.act(f)
@@ -423,11 +423,8 @@ class PointNextEncoder(nn.Module):
                                 ))
         return nn.Sequential(*layers)
 
-    def forward_cls_feat(self, p0, f0=None):
-        if hasattr(p0, 'keys'):
-            p0, f0 = p0['pos'], p0.get('x', None)
-        if f0 is None:
-            f0 = p0.clone().transpose(1, 2).contiguous()
+    def forward_cls_feat(self, data):
+        p0, f0 = data['pos'], data.get('x', None)
         for i in range(0, len(self.encoder)):
             p0, f0 = self.encoder[i]([p0, f0])
         return f0.squeeze(-1)
