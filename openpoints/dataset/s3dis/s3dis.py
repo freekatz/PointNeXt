@@ -78,6 +78,16 @@ class S3DIS(Dataset):
         self.variable = variable
         self.shuffle = shuffle
 
+
+        self.strides = [4, 4, 4, 4]
+        self.k = 32
+        self.alpha = 0.1
+        self.gs_opts = GaussianOptions.default()
+        self.gs_opts.n_cam = 64
+        self.gs_opts.fovy = 120
+        if self.alpha <= 0:
+            self.gs_opts.n_cam = 1
+
         raw_root = os.path.join(data_root, 'raw')
         self.raw_root = raw_root
         data_list = sorted(os.listdir(raw_root))
@@ -119,15 +129,6 @@ class S3DIS(Dataset):
         self.data_idx = np.arange(len(self.data_list))
         assert len(self.data_idx) > 0
         logging.info(f"\nTotally {len(self.data_idx)} samples in {split} set")
-
-        self.strides = [4, 4, 4, 4]
-        self.k = 32
-        self.alpha = 0.1
-        self.gs_opts = GaussianOptions.default()
-        self.gs_opts.n_cam = 64
-        self.gs_opts.fovy = 120
-        if self.alpha <= 0:
-            self.gs_opts.n_cam = 1
 
     def __getitem__(self, idx):
         data_idx = self.data_idx[idx % len(self.data_idx)]
