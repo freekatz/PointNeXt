@@ -2,9 +2,6 @@ import torch
 from einops import repeat
 from pytorch3d.ops import sample_farthest_points
 
-from .cutils import grid_subsampling
-from pointnet2_ops_lib.pointnet2_ops import pointnet2_utils
-
 
 def create_sampler(sampler='random', **kwargs):
     if sampler == 'random':
@@ -44,18 +41,6 @@ def fps_sample(xyz, n_samples, **kwargs):
         K=n_samples,
         random_start_point=random_start_point,
     )
-    return xyz_sampled, xyz_idx
-
-
-def fps_sample_2(xyz, n_samples, **kwargs):
-    """
-    :param xyz: [B, N, 3]
-    :return: [B, n_samples, 3], [B, n_samples]
-    """
-    if not xyz.is_contiguous():
-        xyz = xyz.contiguous()
-    xyz_idx = pointnet2_utils.furthest_point_sample(xyz, n_samples, **kwargs).long()
-    xyz_sampled = torch.gather(xyz, 1, xyz_idx.unsqueeze(-1).expand(-1, -1, 3))
     return xyz_sampled, xyz_idx
 
 
