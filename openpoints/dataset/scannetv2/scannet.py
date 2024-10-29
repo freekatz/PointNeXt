@@ -216,11 +216,11 @@ class ScanNet(Dataset):
 
             kdt_sa = KDTree(coord.numpy(), visible.numpy())
             _, idx_sa = kdt_sa.query(sub_coord.numpy(), sub_visible.numpy(), k=k, alpha=self.alpha, scaler=scaler)
-            idx_group_sa.append(torch.from_numpy(idx_sa).long())
+            idx_group_sa.append(torch.from_numpy(idx_sa).int())
 
             kdt_la = KDTree(sub_coord.numpy(), sub_visible.numpy())
             _, idx_la = kdt_la.query(sub_coord.numpy(), sub_visible.numpy(), k=k, alpha=self.alpha, scaler=scaler)
-            idx_group_la.append(torch.from_numpy(idx_la).long())
+            idx_group_la.append(torch.from_numpy(idx_la).int())
 
             coord = sub_coord
             visible = sub_visible
