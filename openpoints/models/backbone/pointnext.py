@@ -64,7 +64,7 @@ class LocalAggregation(nn.Module):
         # p: position, f: feature
         p, f = pf
         # neighborhood_features
-        group_idx = data['group_idx_la'][self.layer_index - 1]
+        group_idx = data['idx_group_la'][self.layer_index - 1]
         dp = grouping_operation(p.transpose(1, 2), group_idx)
         fj = grouping_operation(f, group_idx)
         fj = get_aggregation_feautres(p, dp, f, fj, self.feature_type)
@@ -142,7 +142,7 @@ class SetAbstraction(nn.Module):
             f = self.convs(f)  # (n, c)
         else:
             if not self.all_aggr:
-                idx = data['ds_idx'][self.layer_index-1]
+                idx = data['idx_ds'][self.layer_index-1]
                 new_p = torch.gather(p, 1, idx.unsqueeze(-1).expand(-1, -1, 3))
             else:
                 new_p = p
@@ -161,7 +161,7 @@ class SetAbstraction(nn.Module):
             else:
                 fi = None
 
-            group_idx = data['group_idx_sa'][self.layer_index - 1]
+            group_idx = data['idx_group_sa'][self.layer_index - 1]
             dp = grouping_operation(p.transpose(1, 2), group_idx)
             fj = grouping_operation(f, group_idx)
             fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
