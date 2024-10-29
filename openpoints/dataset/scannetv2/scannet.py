@@ -183,7 +183,7 @@ class ScanNet(Dataset):
          
         if 'heights' not in data.keys():
             data['heights'] = data['pos'][:, self.gravity_dim:self.gravity_dim+1] - data['pos'][:, self.gravity_dim:self.gravity_dim+1].min()
-        data['x'] = torch.cat([data['pos'], data['x'], data['heights']], dim=-1).transpose(0, 1)
+        data['x'] = torch.cat([data['pos'], data['x'], data['heights']], dim=-1).transpose(0, 1).contiguous()
         return self.make_idx(idx, data)
 
     def __len__(self):
