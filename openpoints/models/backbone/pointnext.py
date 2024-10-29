@@ -381,7 +381,7 @@ class PointNextEncoder(nn.Module):
                 i, block, channels[i], blocks[i], stride=strides[i],
                 is_head=i == 0 and strides[i] == 1
             ))
-        self.encoder = nn.Sequential(*encoder)
+        self.encoder = nn.ModuleList(encoder)
         self.out_channels = channels[-1]
         self.channel_list = channels
 
@@ -421,7 +421,7 @@ class PointNextEncoder(nn.Module):
                                 conv_args=self.conv_args, expansion=self.expansion,
                                 use_res=self.use_res
                                 ))
-        return nn.Sequential(*layers)
+        return nn.ModuleList(layers)
 
     def forward_cls_feat(self, data):
         p0, f0 = data['pos'], data.get('x', None)
@@ -433,7 +433,9 @@ class PointNextEncoder(nn.Module):
         p0, f0 = data['pos'], data.get('x', None)
         p, f = [p0], [f0]
         for i in range(0, len(self.encoder)):
-            _p, _f = self.encoder[i]([p[-1], f[-1]], data)
+            _p, _f = self.encoder[i][0]([p[-1], f[-1]], data)
+            for j in range(1, len(self.encoder[i])):
+                _p, _f = self.encoder[i][j]([_p, _f], data)
             p.append(_p)
             f.append(_f)
         return p, f
