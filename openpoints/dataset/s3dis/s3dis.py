@@ -6,7 +6,7 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
-from ptkdtree.kdtree import KDTree
+from pykdtree.kdtree import KDTree
 from ..data_util import crop_pc, voxelize
 from ..build import DATASETS
 from ...utils import GaussianOptions, NaiveGaussian3D, fps_sample, make_gs_points, merge_gs_list

@@ -4,7 +4,7 @@ import os.path as osp
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from ptkdtree.kdtree import KDTree
+from pykdtree.kdtree import KDTree
 from ..build import DATASETS
 from ..data_util import crop_pc, voxelize
 from ...transforms.point_transform_cpu import PointsToTensor
