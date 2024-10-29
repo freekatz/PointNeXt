@@ -3008,7 +3008,7 @@ static PyObject *__pyx_pf_17nearest_neighbors_4knn_batch_distance_pick(CYTHON_UN
   /* "knn.pyx":133
  * 
  *     # create indices tensor
- *     indices = np.zeros((pts.shape[0], nqueries, K), dtype=np.long)             # <<<<<<<<<<<<<<
+ *     indices = np.zeros((pts.shape[0], nqueries, K), dtype=np.int64)             # <<<<<<<<<<<<<<
  *     queries = np.zeros((pts.shape[0], nqueries, dim), dtype=np.float32)
  * 
  */
@@ -3057,7 +3057,7 @@ static PyObject *__pyx_pf_17nearest_neighbors_4knn_batch_distance_pick(CYTHON_UN
 
   /* "knn.pyx":134
  *     # create indices tensor
- *     indices = np.zeros((pts.shape[0], nqueries, K), dtype=np.long)
+ *     indices = np.zeros((pts.shape[0], nqueries, K), dtype=np.int64)
  *     queries = np.zeros((pts.shape[0], nqueries, dim), dtype=np.float32)             # <<<<<<<<<<<<<<
  * 
  *     pts_cpp = np.ascontiguousarray(pts, dtype=np.float32)
