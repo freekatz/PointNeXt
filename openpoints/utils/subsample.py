@@ -2,8 +2,8 @@ import torch
 from einops import repeat
 from pytorch3d.ops import sample_farthest_points
 
-from utils.cutils import grid_subsampling
-from utils.pointnet2_ops_lib.pointnet2_ops import pointnet2_utils
+from .cutils import grid_subsampling
+from pointnet2_ops_lib.pointnet2_ops import pointnet2_utils
 
 
 def create_sampler(sampler='random', **kwargs):
