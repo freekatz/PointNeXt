@@ -347,7 +347,11 @@ def train_one_epoch(model, train_loader, criterion, optimizer, scheduler, scaler
     for idx, data in pbar:
         keys = data.keys() if callable(data.keys) else data.keys
         for key in keys:
-            data[key] = data[key].cuda(non_blocking=True)
+            if isinstance(data[key], torch.Tensor):
+                data[key] = data[key].cuda(non_blocking=True)
+            elif isinstance(data[key], list):
+                for _i in range(len(data[key])):
+                    data[key][_i] = data[key][_i].cuda(non_blocking=True) if isinstance(data[key][_i], torch.Tensor) else data[key][_i]
         num_iter += 1
         target = data['y'].squeeze(-1)
         """ debug
