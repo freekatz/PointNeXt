@@ -164,13 +164,12 @@ class S3DIS(Dataset):
         gs = NaiveGaussian3D(self.gs_opts, batch_size=8, device=coord.device)
         gs.projects(coord, cam_seed=idx, cam_batch=gs.opt.n_cameras * 2)
         visible = gs.gs_points.visible.squeeze(1).float()
-        n_samples = []
+        n_samples = []  # [6000, 1500, 375, 93]
         pre_n = self.voxel_max
         for s in self.strides:
             n = pre_n//s
             n_samples.append(n)
             pre_n = n
-        n_samples = n_samples[1:]  # [6000, 1500, 375, 93]
         # estimating a distance in Euclidean space as the scaler by random fps
         ps, _ = fps_sample(coord.unsqueeze(0), 2, random_start_point=True)
         ps = ps.squeeze(0)
