@@ -360,7 +360,6 @@ def train_one_epoch(model, train_loader, criterion, optimizer, scheduler, scaler
         vis_points(data['pos'].cpu().numpy()[0], data['x'][0, :3, :].transpose(1, 0))
         end of debug """
         # data['x'] = get_features_by_keys(data, cfg.feature_keys)
-        data['x'] = data['x']
         data['epoch'] = epoch
         total_iter += 1 
         data['iter'] = total_iter 
@@ -416,7 +415,7 @@ def validate(model, val_loader, cfg, num_votes=1, data_transform=None, epoch=-1,
                 for _i in range(len(data[key])):
                     data[key][_i] = data[key][_i].cuda(non_blocking=True) if isinstance(data[key][_i], torch.Tensor) else data[key][_i]
         target = data['y'].squeeze(-1)
-        data['x'] = get_features_by_keys(data, cfg.feature_keys)
+        # data['x'] = get_features_by_keys(data, cfg.feature_keys)
         data['epoch'] = epoch
         data['iter'] = total_iter 
         logits = model(data)
