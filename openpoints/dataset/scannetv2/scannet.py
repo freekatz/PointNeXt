@@ -195,7 +195,7 @@ class ScanNet(Dataset):
         gs.projects(coord, cam_seed=idx, cam_batch=gs.opt.n_cameras * 2)
         visible = gs.gs_points.visible.squeeze(1).float()
         n_samples = []  # [6000, 1500, 375, 93]
-        pre_n = self.voxel_max
+        pre_n = self.voxel_max if self.voxel_max is not None else coord.shape[0]
         for s in self.strides:
             n = pre_n//s
             n_samples.append(n)
