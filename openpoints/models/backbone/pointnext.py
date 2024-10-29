@@ -32,6 +32,7 @@ class LocalAggregation(nn.Module):
     """
 
     def __init__(self,
+                 layer_index,
                  channels: List[int],
                  norm_args={'norm': 'bn1d'},
                  act_args={'act': 'relu'},
@@ -43,6 +44,7 @@ class LocalAggregation(nn.Module):
                  **kwargs
                  ):
         super().__init__()
+        self.layer_index = layer_index
         if kwargs:
             logging.warning(f"kwargs: {kwargs} are not used in {__class__.__name__}")
         channels[0] = CHANNEL_MAP[feature_type](channels[0])
@@ -230,6 +232,7 @@ class FeaturePropogation(nn.Module):
 
 class InvResMLP(nn.Module):
     def __init__(self,
+                 layer_index,
                  in_channels,
                  norm_args=None,
                  act_args=None,
@@ -245,7 +248,7 @@ class InvResMLP(nn.Module):
         super().__init__()
         self.use_res = use_res
         mid_channels = int(in_channels * expansion)
-        self.convs = LocalAggregation([in_channels, in_channels],
+        self.convs = LocalAggregation(layer_index, [in_channels, in_channels],
                                       norm_args=norm_args, act_args=act_args if num_posconvs > 0 else None,
                                       group_args=group_args, conv_args=conv_args,
                                       **aggr_args, **kwargs)
@@ -280,6 +283,7 @@ class InvResMLP(nn.Module):
 
 class ResBlock(nn.Module):
     def __init__(self,
+                 layer_index,
                  in_channels,
                  norm_args=None,
                  act_args=None,
@@ -293,7 +297,7 @@ class ResBlock(nn.Module):
         super().__init__()
         self.use_res = use_res
         mid_channels = in_channels * expansion
-        self.convs = LocalAggregation([in_channels, in_channels, mid_channels, in_channels],
+        self.convs = LocalAggregation(layer_index, [in_channels, in_channels, mid_channels, in_channels],
                                       norm_args=norm_args, act_args=None,
                                       group_args=group_args, conv_args=conv_args,
                                       **aggr_args, **kwargs)
