@@ -259,11 +259,17 @@ class ScanNet(Dataset):
                 idx_group_la_layer.append(idx_group_la[i])
                 idx_group_sa_layer.append(idx_group_sa[i])
                 idx_ds_layer.append(idx_ds[i])
-            idx_group_la_all.append(torch.stack(idx_group_la_layer, 0))
-            idx_group_sa_all.append(torch.stack(idx_group_sa_layer, 0))
-            idx_ds_all.append(torch.stack(idx_ds_layer, 0))
-        data['idx_group_la'] = idx_group_la_all
-        data['idx_group_sa'] = idx_group_sa_all
-        data['idx_ds'] = idx_ds_all
-        return data
+                if len(idx_group_la_layer) == 1:
+                    idx_group_la_all[-1] = torch.stack(idx_group_la_layer, 0).unsqueeze(0)
+                    idx_group_sa_all[-1] = torch.stack(idx_group_sa_layer, 0).unsqueeze(0)
+                    idx_ds_all[-1] = torch.stack(idx_ds_layer, 0).unsqueeze(0)
+                else:
+                    idx_group_la_all.append(torch.stack(idx_group_la_layer, 0))
+                    idx_group_sa_all.append(torch.stack(idx_group_sa_layer, 0))
+                    idx_ds_all.append(torch.stack(idx_ds_layer, 0))
+            data['idx_group_la'] = idx_group_la_all
+            data['idx_group_sa'] = idx_group_sa_all
+            data['idx_ds'] = idx_ds_all
+            return data
+
 
