@@ -113,7 +113,7 @@ class SetAbstraction(nn.Module):
         channels = [in_channels] + [mid_channel] * \
                    (layers - 1) + [out_channels]
         channels[0] = in_channels if is_head else CHANNEL_MAP[feature_type](channels[0])
-
+        channels[0] = 3 if self.layer_index > 1 else CHANNEL_MAP[feature_type](channels[0])
         if self.use_res:
             self.skipconv = create_convblock1d(
                 in_channels, channels[-1], norm_args=None, act_args=None) if in_channels != channels[
@@ -151,8 +151,8 @@ class SetAbstraction(nn.Module):
 
             group_idx = data['idx_group_sa'][self.layer_index - 1]
             dp = grouping_operation(p.transpose(1, 2).contiguous(), group_idx)
-            dp = dp - new_p.transpose(1, 2).unsqueeze(-1)  # (B, 3, npoint, nsample)
-            if self.layer_index > 1:
+            dp = dp - new_p.transpose(1, 2).unsqueeze(-1).expand(-1, -1, -1, dp.shape[-1])
+            if self.layer_index == 1:
                 fj = grouping_operation(f.contiguous(), group_idx)
                 fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
             else:
