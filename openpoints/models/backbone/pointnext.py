@@ -143,32 +143,22 @@ class SetAbstraction(nn.Module):
         if self.is_head:
             f = self.convs(f)  # (n, c)
         else:
-            if not self.all_aggr:
-                idx = data['idx_ds'][self.layer_index-1]
-                new_p = torch.gather(p, 1, idx.unsqueeze(-1).expand(-1, -1, 3))
-            else:
-                new_p = p
-            """ DEBUG neighbor numbers. 
-            query_xyz, support_xyz = new_p, p
-            radius = self.grouper.radius
-            dist = torch.cdist(query_xyz.cpu(), support_xyz.cpu())
-            points = len(dist[dist < radius]) / (dist.shape[0] * dist.shape[1])
-            logging.info(f'query size: {query_xyz.shape}, support size: {support_xyz.shape}, radius: {radius}, num_neighbors: {points}')
-            DEBUG end """
-            if self.use_res or 'df' in self.feature_type:
-                fi = torch.gather(
-                    f, -1, idx.unsqueeze(1).expand(-1, f.shape[1], -1))
-                if self.use_res:
-                    identity = self.skipconv(fi)
-            else:
-                fi = None
+            idx = data['idx_ds'][self.layer_index - 1]
+            new_p = torch.gather(p, 1, idx.unsqueeze(-1).expand(-1, -1, 3))
+            fi = torch.gather(
+                f, -1, idx.unsqueeze(1).expand(-1, f.shape[1], -1))
+            identity = self.skipconv(fi)
 
             group_idx = data['idx_group_sa'][self.layer_index - 1]
             dp = grouping_operation(p.transpose(1, 2).contiguous(), group_idx)
-            fj = grouping_operation(f.contiguous(), group_idx)
-            fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
+            dp = dp - p.unsqueeze(-1)  # (B, 3, npoint, nsample)
+            if self.layer_index > 1:
+                fj = grouping_operation(f.contiguous(), group_idx)
+                fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
+            else:
+                fj = dp
             f = self.pool(self.convs(fj))
-            if self.use_res:
+            if self.layer_index > 1:
                 f = self.act(f + identity)
             p = new_p
         return p, f
