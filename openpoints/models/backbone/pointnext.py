@@ -151,7 +151,7 @@ class SetAbstraction(nn.Module):
 
             group_idx = data['idx_group_sa'][self.layer_index - 1]
             dp = grouping_operation(p.transpose(1, 2).contiguous(), group_idx)
-            dp = dp - p.transpose(1, 2).unsqueeze(-1)  # (B, 3, npoint, nsample)
+            dp = dp - new_p.transpose(1, 2).unsqueeze(-1)  # (B, 3, npoint, nsample)
             if self.layer_index > 1:
                 fj = grouping_operation(f.contiguous(), group_idx)
                 fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
