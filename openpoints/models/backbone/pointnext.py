@@ -154,7 +154,7 @@ class SetAbstraction(nn.Module):
             dp = dp - new_p.transpose(1, 2).unsqueeze(-1).expand(-1, -1, -1, dp.shape[-1])
             if self.layer_index == 1:
                 fj = grouping_operation(f.contiguous(), group_idx)
-                fj = get_aggregation_feautres(new_p, dp, fi, fj, feature_type=self.feature_type)
+                fj = torch.cat([dp, fj], dim=1)
             else:
                 fj = dp
             f = self.pool(self.convs(fj))

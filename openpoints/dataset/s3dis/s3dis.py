@@ -151,7 +151,7 @@ class S3DIS(Dataset):
             data = self.transform(data)
 
         if 'heights' not in data.keys():
-            data['heights'] =  torch.from_numpy(coord[:, self.gravity_dim:self.gravity_dim+1].astype(np.float32))
+            data['heights'] = torch.from_numpy(coord[:, self.gravity_dim:self.gravity_dim+1].astype(np.float32))
         data['x'] = torch.cat([data['x'], data['heights']], dim=-1).transpose(0, 1).contiguous().float()
         return self.make_idx(idx, data)
 
