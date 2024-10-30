@@ -112,8 +112,12 @@ class SetAbstraction(nn.Module):
         mid_channel = out_channels // 2 if stride > 1 else out_channels
         channels = [in_channels] + [mid_channel] * \
                    (layers - 1) + [out_channels]
-        channels[0] = in_channels if is_head else CHANNEL_MAP[feature_type](channels[0])
-        channels[0] = 3 if self.layer_index > 1 else CHANNEL_MAP[feature_type](channels[0])
+        if is_head:
+            channels[0] = in_channels
+        elif self.layer_index == 1:
+            channels[0] = CHANNEL_MAP[feature_type](channels[0])
+        else:
+            channels[0] = 3
         if self.use_res:
             self.skipconv = create_convblock1d(
                 in_channels, channels[-1], norm_args=None, act_args=None) if in_channels != channels[
