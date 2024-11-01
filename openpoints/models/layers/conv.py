@@ -4,7 +4,23 @@ import torch.nn as nn
 from .activation import create_act
 from .norm import create_norm, create_norm
 
+def create_mlp(*args, norm_args='bn1d', act_args='relu', **kwargs):
+    out_channels = args[1]
+    in_channels = args[0]
+    bias = kwargs.pop('bias', True)
 
+    conv_layer = []
+    conv_layer.append(Conv1d(*args, bias=bias, **kwargs))
+    norm_layer = create_norm(norm_args, in_channels, dimension='1d')
+    bias = False if norm_layer is not None else bias
+    if norm_layer is not None:
+        conv_layer.append(norm_layer)
+    act_layer = create_act(act_args)
+    if act_args is not None:
+        conv_layer.append(act_layer)
+    conv_layer.append(Conv1d(*args, bias=bias, **kwargs))
+
+    return nn.Sequential(*conv_layer)
 class Conv2d(nn.Conv2d):
     def __init__(self, *args, **kwargs):
         if len(args) == 2 and 'kernel_size' not in kwargs.keys():

@@ -21,7 +21,7 @@ dataset:
 
 feature_keys: x,heights
 num_classes: 13
-batch_size: 32
+#batch_size: 32
 val_batch_size: 1
 
 dataloader:
