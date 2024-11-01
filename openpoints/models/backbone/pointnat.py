@@ -328,7 +328,7 @@ class SetAbstraction(nn.Module):
             #     logging.info(alpha)
 
             p = new_p
-        return p, f, pe
+        return p, f, pe, data
 
 
 class FeaturePropogation(nn.Module):
@@ -439,7 +439,7 @@ class InvResMLP(nn.Module):
         if f.shape[-1] == identity.shape[-1] and self.use_res:
             f += identity
         f = self.act(f)
-        return [p, f, pe]
+        return [p, f, pe, data]
 
 
 @MODELS.register_module()
@@ -610,16 +610,16 @@ class PointNATEncoder(nn.Module):
             if i == 0:
                 pe = None
                 # pe = f0.transpose(1,-1)
-                _p, _f, _ = self.encoder[i]([p[-1], f[-1], pe, data])
+                _p, _f, _, data = self.encoder[i]([p[-1], f[-1], pe, data])
             else:
-                _p, _f, _ = self.encoder[i][0]([p[-1], f[-1], pe, data])
+                _p, _f, _, data = self.encoder[i][0]([p[-1], f[-1], pe, data])
                 if self.blocks[i] > 1:
                     # grouping
                     group_idx = data['idx_group_la'][i - 1]
                     dp = grouping_operation(_p.transpose(1, 2).contiguous(), group_idx)
                     # conv on neighborhood_dp
                     pe = self.pe_encoder[i](dp)
-                    _p, _f, _ = self.encoder[i][1:]([_p, _f, pe, data])
+                    _p, _f, _, data = self.encoder[i][1:]([_p, _f, pe, data])
             p.append(_p)
             f.append(_f)
         return p, f
