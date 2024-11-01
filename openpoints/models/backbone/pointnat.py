@@ -133,8 +133,7 @@ class LocalAggregation(nn.Module):
         f = self.convs1(f)
         # grouping
         group_idx = data['idx_group_la'][self.layer_index - 1]
-        dp = grouping_operation(p.transpose(1, 2), group_idx)
-        fj = grouping_operation(f, group_idx)
+        fj = grouping_operation(f.contiguous(), group_idx)
         # pe + fj
         f = pe + fj
         f = self.pool(f)
@@ -617,7 +616,7 @@ class PointNATEncoder(nn.Module):
                 if self.blocks[i] > 1:
                     # grouping
                     group_idx = data['idx_group_la'][i - 1]
-                    dp = grouping_operation(_p.transpose(1, 2), group_idx)
+                    dp = grouping_operation(_p.transpose(1, 2).contiguous(), group_idx)
                     # conv on neighborhood_dp
                     pe = self.pe_encoder[i](dp)
                     _p, _f, _ = self.encoder[i][1:]([_p, _f, pe, data])
